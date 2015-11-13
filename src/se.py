@@ -81,12 +81,14 @@ for index, tlv in enumerate(tlvs):
             string = True
         ct = encryptor.update(tlv.v)
         stream.append(ct)
+
+        cts = cts + [ct]
+        # print cts
     else:
         string = False
         ptmacer.update(tlv.v)
 
         if (len(stream) > 0):
-            cts.append(ct for ct in stream)
             macer = hmac.HMAC(key, hashes.SHA256(), backend=backend)
             macer.update("".join(stream))
             tags.append((iv, macer.finalize()))
@@ -106,3 +108,6 @@ ptmacer.update(ivs)
 ptmacer.update(merged_mac)
 
 pttag = ptmacer.finalize()
+
+print "".join(cts)
+print iv, merged_mac, pttag
